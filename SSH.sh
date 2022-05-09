@@ -3,20 +3,22 @@
 # description
 # 
 # 
-
-# BUT DU SCRIPT : Connexion SSH sécurisé avec authentification par clés entre deux machines. 
+function ConfirmConfig() 
+{
+	ConfYorN="";
+		while [ "${ConfYorN}" != "y" -a "${ConfYorN}" != "Y" -a "${ConfYorN}" != "n" -a "${ConfYorN}" != "N" ]
+		do
+			echo -n $1 "(y/n) : "
+			read ConfYorN
+		done
+	[ "${ConfYorN}" == "y" -o "${ConfYorN}" == "Y" ] && return 0 || return 1
+}
 
 #-----------------------#
 #	Synopsis	#
 #-----------------------#
 
 #	Step 1
-echo "Pour exécuter ce script, placez-vous dans votre $HOME"
-echo "Suivre la procédure suivante :"
-echo "laissez la question 1 par défaut en tapant entrée"
-echo "Question 1 : Enter file in which to save the key ("$HOME"/.ssh/id_rsa.pub)"
-echo "question 2 : Entrer un passphrase ( assez longue), puis tapez entrée"
-
 if [ $(pwd) != $HOME ] ; then
 	exit 1
 fi
@@ -24,26 +26,21 @@ fi
 #	Step 2
 # Création du dossier .ssh qui sera créé dans /home/<user>.
 # les fichiers des private key, public key et known host y seront stockées.
-mkdir .ssh && cd .ssh/
+mkdir ~/.ssh && cd ~/.ssh
 
-# Etape 3
+#	Step 3
 # Creation d'une passphrase sécurisée
 
 passphrase=""
-while [ "$passphrase" != "oui" ] && [ "$passphrase" != "non" ] ; do
-        echo "veuillez écrire oui ou non"
-        read passphrase
+while	[ "$passphrase" != "oui" ] && [ "$passphrase" != "non" ]
+do
+		echo "veuillez écrire oui ou non"
+		read passphrase
 done
 
 read -p "générer une passphrase avec 128 bits d'entropie ? [oui/non] " passphrase # mesure de la robustesse d'un mot de passe
 
-if [ $passphrase != 'oui' ] && [ $passphrase != 'non' ]
-then
-	echo "veuillez écrire oui ou non"
-fi
-
-if [ $passphrase == oui ]
-then
+if [ $passphrase == oui ] ; then
 	echo "copier/coller le dans votre gestionnaire de mot de passe :"
 	passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'`
 	echo $passwd
@@ -53,8 +50,7 @@ fi
 
 read -p "générer une passphrase avec 256 bits d'entropie ? [oui/non]" passphrase # mesure de la robustesse d'un mot de passe
 
-if [ $passphrase == oui ]
-then
+if [ $passphrase == oui ] ; then
 	echo "copier/coller le dans votre gestionnaire de mot de passe :"
 	passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'`
 	echo $passwd
@@ -62,9 +58,9 @@ else
 	echo "pas de passphrase alors ?"
 fi
 
-# Etape 4
+#	Step 4
 # Génération d'une paire de clés publique/privée
-# algorithmes de chiffrement
+# Algorithmes de chiffrement
 a='rsa'
 b='ecdsa'
 c='ed25519'
@@ -97,10 +93,10 @@ if [ $algo == c ] # si c'est ed25519 => c
 		ssh-keygen -t $c -f $keyname
 fi
 
-# Etape 3
-# On demande le login et l'adresse IP du serveur avec qui on veut une connexion SSH 
-# par authentification de clés. Pour cela, il doivents remplir le champ vide
-echo "Tapez l'adresse du serveur distant sous cette forme : (exple: 192.168.0.20 "
+#	Step 5
+# On demande le login et l'adresse IP du serveur avec qui on veut une connexion SSH par authentification de clés
+# Pour cela, il doivents remplir le champ vide
+echo "Tapez l'adresse du serveur distant sous cette forme : (exemple: 192.168.0.20"
 read adresse
 
 echo "Tapez le login du serveur distant - c'est l'utilisateur du serveur :"
@@ -109,14 +105,9 @@ read login
 # Vérification des données entrées par le client
 echo "votre login et adresse ip sont : $login@$adresse "
 
-# Etape 4
-# On Envoi la clé publique au serveur souhaité
+#	Step 6
+# On Envoie la clé publique au serveur souhaité
 ssh-copy-id -i $HOME/.ssh/id_rsa.pub $login@$adresse
 
-# Etape 4
-# Mise en place de l'agent ssh pour éviter de taper un passphrase à chaque fois
-ssh-add
-
-
-echo "Veuillez-vous connecter maintenant au serveur avec votre login et adresse ip du serveur"
-echo "sous la forme : login@ip-adress" 
+echo "Veuillez-vous connecter maintenant au serveur avec votre login et adresse ip du serveur sous la forme :" 
+echo "login@ip-adress" 
