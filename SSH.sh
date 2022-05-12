@@ -29,7 +29,7 @@ if [ ! -d .ssh ] ; then
 fi
 
 #	Using an existing passphrase
-ConfirmChoice "Do you have a passphrase to use " && read -s passwd
+ConfirmChoice "Do you have a passphrase to use" && read -s passwd
 
 #	Creating a secure passphrase if passwd is empty
 if [ -z "$passwd" ] ; then
