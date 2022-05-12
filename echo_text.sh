@@ -1,10 +1,12 @@
-declare -a echo_text=(
+#!/bin/bash
+
+declare -a text=(
 "line 1"
 "line 2"
 "line 3"
 )
 
-for i in "${echo_test[@]}"
-do
-	echo $i
+# Read the array values with space
+for line in "${text[@]}"; do
+        echo $line
 done
