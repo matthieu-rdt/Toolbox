@@ -7,6 +7,5 @@ echo_text=(
 array_length=${#echo_text[@]}
 for (( i=0; i<=array_length; i++ ))
 do
-echo "${echo_test[$i]} | sudo tee -a /file/path
+	echo "${echo_test[$i]} | sudo tee -a /file/path
 done
-}
