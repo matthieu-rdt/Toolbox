@@ -1,9 +1,14 @@
 #!/bin/bash
 
 # description
-# 
-# 
-function ConfirmConfig() 
+# generating a passphrase (if needed) then a SSH key pair with a send to the remote server
+
+#-----------------------#
+#	Functions	#
+#-----------------------#
+
+# Function from Manu
+function ConfirmChoice() 
 {
 	ConfYorN="";
 		while [ "${ConfYorN}" != "y" -a "${ConfYorN}" != "Y" -a "${ConfYorN}" != "n" -a "${ConfYorN}" != "N" ]
@@ -14,100 +19,47 @@ function ConfirmConfig()
 	[ "${ConfYorN}" == "y" -o "${ConfYorN}" == "Y" ] && return 0 || return 1
 }
 
-#-----------------------#
-#	Synopsis	#
-#-----------------------#
+#-------------------#
+#	Start	    #
+#-------------------#
 
-#	Step 1
-if [ $(pwd) != $HOME ] ; then
-	exit 1
+if [ ! -d .ssh ] ; then
+	mkdir ~/.ssh
 fi
 
-#	Step 2
-# Création du dossier .ssh qui sera créé dans /home/<user>.
-# les fichiers des private key, public key et known host y seront stockées.
-mkdir ~/.ssh && cd ~/.ssh
+#	Creating a secure passphrase
+echo "Choose if you prefer a 128 bits OR a 256 bits passphrase" && sleep 2
 
-#	Step 3
-# Creation d'une passphrase sécurisée
+ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'`
+echo $passwd > $HOME/passph.txt
 
-passphrase=""
-while	[ "$passphrase" != "oui" ] && [ "$passphrase" != "non" ]
-do
-		echo "veuillez écrire oui ou non"
-		read passphrase
-done
+ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'`
+echo $passwd > $HOME/passph.txt
 
-read -p "générer une passphrase avec 128 bits d'entropie ? [oui/non] " passphrase # mesure de la robustesse d'un mot de passe
+chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.txt"
 
-if [ $passphrase == oui ] ; then
-	echo "copier/coller le dans votre gestionnaire de mot de passe :"
-	passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'`
-	echo $passwd
-else
-	echo "avec 256 bits alors ?"
-fi
+##	Generation of a public/private key pair
+#	Encryption algorithms
 
-read -p "générer une passphrase avec 256 bits d'entropie ? [oui/non]" passphrase # mesure de la robustesse d'un mot de passe
+read -p 'give your ssh key a name :' keyname
 
-if [ $passphrase == oui ] ; then
-	echo "copier/coller le dans votre gestionnaire de mot de passe :"
-	passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'`
-	echo $passwd
-else
-	echo "pas de passphrase alors ?"
-fi
+echo "The script suggests one of the encryption algorithms below"
+echo "RSA | ECDSA | ED25519" && sleep 2
 
-#	Step 4
-# Génération d'une paire de clés publique/privée
-# Algorithmes de chiffrement
-a='rsa'
-b='ecdsa'
-c='ed25519'
+ConfirmChoice "RSA , Proven and recommended with a key size of 4096 bits. Compatible everywhere" && ssh-keygen -b 4096 -f ~/.ssh/$keyname # by default so no need for "-type"
 
-echo "Liste des algorithmes sécurisés de clés publiques :"
-echo ""
-echo "RSA # éprouvé et conseillé avec une taille de clé de 4096 bits. Compatible partout."
-echo "ECDSA # conseillé par l’ANSSI mais a priori n’a pas la confiance de tout le monde"
-echo "ED25519 # le dernier arrivé et le meilleur en termes de sécu et de performance."
+ConfirmChoice "ECDSA , Advised by the ANSSI but a priori not trusted by everyone" && ssh-keygen -t $b -b 521 -f ~/.ssh/$keyname
 
-read -p 'choisissez a, b ou c :' algo
-read -p 'donnez un nom à votre ssh key :' keyname # donner un nom de fichier a votre cle
+ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -t $c -f ~/.ssh/$keyname
 
-echo "###################################################"
-echo "RAPPEL de votre passphrase : $passwd"
-echo "###################################################"
+read -p 'Type the address of the remote server in this form: (example: 192.168.0.20)' address 
 
-if [ $algo == a ] # si c'est rsa => a
-	then 
-		ssh-keygen -b 4096 -f $keyname # par défaut donc pas besoin de "-type"
-fi
+read -p 'Type in the remote server login - this is the server user:' login
 
-if [ $algo == b ] # si c'est ecdsa => b
-	then
-		ssh-keygen -t $b -b 512 -f $keyname
-fi
+#	Checking the data entered by the client
+echo "your login and IP address are: $login@$address"
 
-if [ $algo == c ] # si c'est ed25519 => c 
-	then 
-		ssh-keygen -t $c -f $keyname
-fi
+#	Send the public key to the desired server
+ssh-copy-id -i ~/.ssh/$keyname.pub $login@$address
 
-#	Step 5
-# On demande le login et l'adresse IP du serveur avec qui on veut une connexion SSH par authentification de clés
-# Pour cela, il doivents remplir le champ vide
-echo "Tapez l'adresse du serveur distant sous cette forme : (exemple: 192.168.0.20"
-read adresse
-
-echo "Tapez le login du serveur distant - c'est l'utilisateur du serveur :"
-read login
-
-# Vérification des données entrées par le client
-echo "votre login et adresse ip sont : $login@$adresse "
-
-#	Step 6
-# On Envoie la clé publique au serveur souhaité
-ssh-copy-id -i $HOME/.ssh/id_rsa.pub $login@$adresse
-
-echo "Veuillez-vous connecter maintenant au serveur avec votre login et adresse ip du serveur sous la forme :" 
-echo "login@ip-adress" 
+echo "You can now connect to the server with your login and your server IP address" 
