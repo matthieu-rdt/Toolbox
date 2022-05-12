@@ -61,4 +61,11 @@ echo "your login and IP address are: $login@$address"
 #	Send the public key to the desired server
 ssh-copy-id -i ~/.ssh/$keyname.pub $login@$address
 
-echo "You can now connect to the server with your login and your server IP address" 
+# To finish
+#tee -a ~/.ssh/config << END
+#Host $
+#	HostName $IP
+#	User $login
+#	IdentityFile ~/.ssh/$keyname
+#	IdentitiesOnly yes
+#END
