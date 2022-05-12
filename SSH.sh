@@ -2,6 +2,7 @@
 
 # description
 # generating a passphrase (if needed) then a SSH key pair with a send to the remote server
+# ssh-keygen [-q] [-a rounds] [-b bits] [-C comment] [-f output_keyfile] [-m format] [-N new_passphrase] [-O option] [-t dsa | ecdsa | ecdsa-sk | ed25519 | ed25519-sk | rsa]
 
 #-----------------------#
 #	Functions	#
@@ -41,20 +42,18 @@ chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.t
 ##	Generation of a public/private key pair
 #	Encryption algorithms
 
-read -p 'give your ssh key a name :' keyname
+read -p 'give your ssh key a name : ' keyname
 
 echo "The script suggests one of the encryption algorithms below"
-echo "RSA | ECDSA | ED25519" && sleep 2
+echo "RSA | ED25519" && sleep 2
 
-ConfirmChoice "RSA , Proven and recommended with a key size of 4096 bits. Compatible everywhere" && ssh-keygen -b 4096 -f ~/.ssh/$keyname # by default so no need for "-type"
+ConfirmChoice "RSA , Proven and recommended with a key size of 4096 bits. Compatible everywhere" && ssh-keygen -a 100 -b 4096 -N "$passwd" -f ~/.ssh/$keyname # by default so no need for "-t"
 
-ConfirmChoice "ECDSA , Advised by the ANSSI but a priori not trusted by everyone" && ssh-keygen -t $b -b 521 -f ~/.ssh/$keyname
+ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -a 100 -f ~/.ssh/$keyname -N "$passwd" -t ed25519
 
-ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -t $c -f ~/.ssh/$keyname
+read -p 'Type the address of the remote server in this form: (example: 192.168.0.20) ' address 
 
-read -p 'Type the address of the remote server in this form: (example: 192.168.0.20)' address 
-
-read -p 'Type in the remote server login - this is the server user:' login
+read -p 'Type in the remote server login - this is the server user: ' login
 
 #	Checking the data entered by the client
 echo "your login and IP address are: $login@$address"
