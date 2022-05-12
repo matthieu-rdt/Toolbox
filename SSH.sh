@@ -28,16 +28,21 @@ if [ ! -d .ssh ] ; then
 	mkdir ~/.ssh
 fi
 
-#	Creating a secure passphrase
-echo "Choose if you prefer a 128 bits OR a 256 bits passphrase" && sleep 2
+#	Using an existing passphrase
+ConfirmChoice "Do you have a passphrase to use " && read -s passwd
 
-ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'`
-echo $passwd > $HOME/passph.txt
+#	Creating a secure passphrase if passwd is empty
+if [ -z "$passwd" ] ; then
+	echo "Choose if you prefer a 128 bits OR a 256 bits passphrase" && sleep 2
 
-ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'`
-echo $passwd > $HOME/passph.txt
+	ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'`
+	echo $passwd > $HOME/passph.txt
 
-chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.txt"
+	ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'`
+	echo $passwd > $HOME/passph.txt
+
+	chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.txt"
+fi
 
 ##	Generation of a public/private key pair
 #	Encryption algorithms
