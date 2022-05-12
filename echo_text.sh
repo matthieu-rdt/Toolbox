@@ -6,7 +6,6 @@ declare -a text=(
 "line 3"
 )
 
-# Read the array values with space
 for line in "${text[@]}"; do
         echo $line
 done
