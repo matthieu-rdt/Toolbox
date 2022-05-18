@@ -1,7 +1,7 @@
-#       Creation of a temp file
+#	Creation of a temp file
 filename=`mktemp /tmp/list_of_variables_XXX_$$`
 cat << EOF > $filename
-#       A list of variables
+#	A list of variables
 variable1=""
 variable2=""
 variable3=""
