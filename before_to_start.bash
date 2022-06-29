@@ -53,9 +53,8 @@ check_net_int_conf_file () {
 
 pwd_root () {
 	if 	[[ $UID -ne 0 || $(pwd) != "/root" ]] ; then
-		echo "Run 'su root' & 'mv $0 -t /root/'"
-		echo "And then"
-		echo "Run 'su - root' ; $0'"
+		echo "Run 'su root && mv $(basename $0) -t /root/'"
+		echo "Then run 'su - root && $0'"
 		exit 1
 	fi
 }
