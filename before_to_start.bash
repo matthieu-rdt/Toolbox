@@ -55,7 +55,7 @@ pwd_root () {
 	if 	[[ $UID -ne 0 || $(pwd) != "/root" ]] ; then
 		echo "Run :"
 		echo "su root"
-		echo "mv $(basename $0) -t /root/'"
+		echo "mv $(basename $0) -t /root/"
 		echo "su - root"
 		exit 1
 	fi
