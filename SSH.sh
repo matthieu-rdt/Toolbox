@@ -32,10 +32,10 @@ fi
 ConfirmChoice "Do you have a passphrase to use" && read -s passwd
 
 #	Creating a secure passphrase if needed
-ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'`
+ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'` \
 echo $passwd > $HOME/passph.txt
 
-ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'`
+ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'` \
 echo $passwd > $HOME/passph.txt
 
 chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.txt"
