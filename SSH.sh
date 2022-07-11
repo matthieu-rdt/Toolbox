@@ -71,7 +71,7 @@ ssh-copy-id -i ~/.ssh/$keyname.pub $login@$address
 
 #	Make SSH connection easier
 echo "Creating ~/.ssh/config"
-echo "Usage ssh <customised hostname>
+echo "Usage ssh <customised hostname>"
 
 read -p 'Name your machine : ' hostname
 
