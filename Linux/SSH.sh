@@ -43,7 +43,7 @@ chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.t
 ##	Generation of a public/private key pair
 #	Encryption algorithms
 
-read -p 'give your ssh key a name : ' keyname
+ConfirmChoice "Do you want to name your key" && read -p 'give your ssh key a name : ' keyname
 
 echo "One of the encryption algorithms is recommended"
 echo "RSA | ED25519" && sleep 2
@@ -54,12 +54,13 @@ if 	[ -f "$passwd" ] ; then
 	ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -a 100 -f ~/.ssh/$keyname -N "$passwd" -t ed25519
 
 else
-	ConfirmChoice "RSA , Proven and recommended with a key size of 4096 bits. Compatible everywhere" && ssh-keygen -a 100 -b 4096 -N "$passwd" -f ~/.ssh/$keyname # by default so no need for "-t"
+#	by default so no need for "-t"
+	ConfirmChoice "RSA , Proven and recommended with a key size of 4096 bits. Compatible everywhere" && ssh-keygen -a 100 -b 4096 -f ~/.ssh/$keyname
 
-	ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -a 100 -f ~/.ssh/$keyname -N "$passwd" -t ed25519
+	ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -a 100 -f ~/.ssh/$keyname -t ed25519
 fi
 
-read -p 'Type the address of the remote server in this form: (example: 192.168.0.20) ' address 
+read -p 'Type the address of the remote server in this form: (example: 192.168.1.2) ' address
 
 read -p 'Type in the remote server login - this is the server user : ' login
 
