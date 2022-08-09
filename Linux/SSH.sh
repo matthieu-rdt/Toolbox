@@ -45,8 +45,8 @@ fi
 ##	Generation of a public/private key pair
 #	Encryption algorithms
 
-echo "default name is either <id_rsa> or <id_ed25519>, a name is required"
-ConfirmChoice "Do you want to name your key" && read -p 'give your ssh key a name : ' keyname
+echo "Default name is either <id_rsa> or <id_ed25519>, a name is required"
+read -p 'Give your ssh key a name : ' keyname
 
 echo "One of the encryption algorithms is recommended"
 echo "RSA | ED25519" && sleep 2
