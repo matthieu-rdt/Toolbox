@@ -38,11 +38,14 @@ echo $passwd > $HOME/passph.txt
 ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'` \
 echo $passwd > $HOME/passph.txt
 
-chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.txt"
+if	[ -f "$passwd" ] ; then
+	chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.txt"
+fi
 
 ##	Generation of a public/private key pair
 #	Encryption algorithms
 
+echo "default name is either <id_rsa> or <id_ed25519>, a name is required"
 ConfirmChoice "Do you want to name your key" && read -p 'give your ssh key a name : ' keyname
 
 echo "One of the encryption algorithms is recommended"
