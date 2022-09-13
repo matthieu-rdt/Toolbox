@@ -1,4 +1,4 @@
-curl -sO https://raw.githubusercontent.com/matthieu-rdt/Toolbox/main/Linux/ConfirmChoice.sh
+wget https://raw.githubusercontent.com/matthieu-rdt/Toolbox/master/Linux/ConfirmChoice.sh
 
 source $HOME/ConfirmChoice.sh
 
