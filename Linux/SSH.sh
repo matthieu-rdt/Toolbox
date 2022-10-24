@@ -9,7 +9,7 @@
 #-----------------------#
 
 # Function from Manu
-function ConfirmChoice() 
+ConfirmChoice()
 {
 	ConfYorN="";
 		while [ "${ConfYorN}" != "y" -a "${ConfYorN}" != "Y" -a "${ConfYorN}" != "n" -a "${ConfYorN}" != "N" ]
