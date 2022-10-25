@@ -20,6 +20,16 @@ ConfirmChoice()
 	[ "${ConfYorN}" == "y" -o "${ConfYorN}" == "Y" ] && return 0 || return 1
 }
 
+CreatePassphrase()
+{
+	#	Creating a secure passphrase if needed
+	ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'`
+	echo $passwd > $HOME/passph.txt
+
+	ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'`
+	echo $passwd > $HOME/passph.txt
+}
+
 #-------------------#
 #	Start	    #
 #-------------------#
@@ -29,29 +39,25 @@ if	[ ! -d .ssh ] ; then
 fi
 
 #	Using an existing passphrase
-ConfirmChoice "Do you have a passphrase to use" && read -s passwd
+ConfirmChoice "Do you have a passphrase to use" && read -s passwd || CreatePassphrase
 
-#	Creating a secure passphrase if needed
-ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g'` \
-echo $passwd > $HOME/passph.txt
-
-ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//'` \
-echo $passwd > $HOME/passph.txt
-
-if	[ -f "$passwd" ] ; then
+if	[ ! -z $passwd ] ; then
 	chmod 400 $HOME/passph.txt && echo "Your passphrase is located in $HOME/passph.txt"
 fi
 
 ##	Generation of a public/private key pair
 #	Encryption algorithms
 
-echo "Default name is either <id_rsa> or <id_ed25519>, a name is required"
-read -p 'Give your ssh key a name : ' keyname
+while [ -z $keyname ] ; do
+	echo "Note : If the key name is already existing, you can choose to overwrite it or not"
+	echo "Default name is either <id_rsa> or <id_ed25519>, a name is required"
+	read -p 'Give your ssh key a name : ' keyname
+done
 
 echo "One of the encryption algorithms is recommended"
 echo "RSA | ED25519" && sleep 2
 
-if 	[ -f "$passwd" ] ; then
+if 	[ ! -z $passwd ] ; then
 	ConfirmChoice "RSA , Proven and recommended with a key size of 4096 bits. Compatible everywhere" && ssh-keygen -a 100 -b 4096 -N "$passwd" -f ~/.ssh/$keyname # by default so no need for "-t"
 
 	ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -a 100 -f ~/.ssh/$keyname -N "$passwd" -t ed25519
