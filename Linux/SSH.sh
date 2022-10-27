@@ -92,3 +92,7 @@ Host $hostname
 	IdentityFile ~/.ssh/$keyname
 	IdentitiesOnly yes
 END
+
+#	Final step
+ConfirmChoice "Do you want to back up your public key to your $HOME ?" && cp -p ~/.ssh/$keyname.pub $HOME/$keyname.pub
+ConfirmChoice "Then remove it ?" && rm ~/.ssh/$keyname.pub
