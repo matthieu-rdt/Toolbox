@@ -90,7 +90,6 @@ Host $hostname
 	HostName $address
 	User $login
 	IdentityFile ~/.ssh/$keyname
-	IdentitiesOnly yes
 END
 
 #	Final step
