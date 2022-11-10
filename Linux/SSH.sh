@@ -73,26 +73,26 @@ fi
 if	[ ! -f ~/.ssh/$keyname ] ; then
 	echo 'No key pair created'
 	exit 3
-else
-	read -p 'Type the address of the remote server in this form: (example: 192.168.1.2) ' address
-	read -p 'Type in the remote server login - this is the server user : ' login
-
-	#	Checking the data entered by the client
-	echo "your login and IP address are: $login@$address"
-
-	#	Send the public key to the desired server
-	ssh-copy-id -i ~/.ssh/$keyname.pub $login@$address
-
-	#	Make SSH connection easier
-	echo "Creating ~/.ssh/config"
-	echo "Usage ssh <customised hostname>"
-
-	read -p 'Name your machine : ' hostname
-
-	tee -a ~/.ssh/config << END
-	Host $hostname
-		HostName $address
-		User $login
-		IdentityFile ~/.ssh/$keyname
-	END
 fi
+
+read -p 'Type the address of the remote server in this form: (example: 192.168.1.2) ' address
+read -p 'Type in the remote server login - this is the server user : ' login
+
+#	Checking the data entered by the client
+echo "your login and IP address are: $login@$address"
+
+#	Send the public key to the desired server
+ssh-copy-id -i ~/.ssh/$keyname.pub $login@$address
+
+#	Make SSH connection easier
+echo "Creating ~/.ssh/config"
+echo "Usage ssh <customised hostname>"
+
+read -p 'Name your machine : ' hostname
+
+tee -a ~/.ssh/config << END
+Host $hostname
+	HostName $address
+	User $login
+	IdentityFile ~/.ssh/$keyname
+END
