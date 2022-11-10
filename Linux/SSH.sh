@@ -70,7 +70,10 @@ else
 	ConfirmChoice "ED25519 , The latest and greatest in terms of safety and performance" && ssh-keygen -a 100 -f ~/.ssh/$keyname -t ed25519
 fi
 
-if	[ -f ~/.ssh/$keyname ] ; then
+if	[ ! -f ~/.ssh/$keyname ] ; then
+	echo 'No key pair created'
+	exit 3
+else
 	read -p 'Type the address of the remote server in this form: (example: 192.168.1.2) ' address
 	read -p 'Type in the remote server login - this is the server user : ' login
 
@@ -92,7 +95,4 @@ if	[ -f ~/.ssh/$keyname ] ; then
 		User $login
 		IdentityFile ~/.ssh/$keyname
 	END
-else
-	echo 'No key pair created'
-	exit 3
 fi
