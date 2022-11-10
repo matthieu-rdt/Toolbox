@@ -45,9 +45,9 @@ while [ -z $keyname ] ; do
 	read -p 'Give your ssh key a name : ' keyname
 done
 
-------------------------------
+#---------------------------
 passph="passph-$keyname.txt"
-------------------------------
+#---------------------------
 
 ##	Generation of a public/private key pair
 #	Encryption algorithms
