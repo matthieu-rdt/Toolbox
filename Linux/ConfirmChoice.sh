@@ -2,11 +2,11 @@
 ConfirmChoice ()
 {
 	ConfYorN="";
-		while [ "${ConfYorN}" != "y" ] && [ "${ConfYorN}" != "Y" ] && [ "${ConfYorN}" != "n" ] && [ "${ConfYorN}" != "N" ]
-		do
-			echo -n "$1" "(y/n) : "
-			read ConfYorN
-		done
+	while [ "${ConfYorN}" != "y" ] && [ "${ConfYorN}" != "Y" ] && [ "${ConfYorN}" != "n" ] && [ "${ConfYorN}" != "N" ]
+	do
+		echo -n "$1" "(y/n) : "
+		read ConfYorN
+	done
 	[ "${ConfYorN}" == "y" ] || [ "${ConfYorN}" == "Y" ] && return 0 || return 1
 }
 
