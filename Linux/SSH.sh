@@ -76,6 +76,7 @@ if	[ ! -f ~/.ssh/$keyname ] ; then
 fi
 
 read -p 'Type the address of the remote server in this form: (example: 192.168.1.2) ' address
+ConfirmChoice "Use the current session user (`whoami`) ?" && login=`whoami` || \
 read -p 'Type in the remote server login - this is the server user : ' login
 
 #	Checking the data entered by the client
