@@ -10,7 +10,7 @@
 #-----------------------#
 
 # Function from Manu
-ConfirmChoice()
+ConfirmChoice ()
 {
 	ConfYorN="";
 	while [ "${ConfYorN}" != "y" ] && [ "${ConfYorN}" != "Y" ] && [ "${ConfYorN}" != "n" ] && [ "${ConfYorN}" != "N" ]
@@ -21,11 +21,20 @@ ConfirmChoice()
 	[ "${ConfYorN}" == "y" ] || [ "${ConfYorN}" == "Y" ] && return 0 || return 1
 }
 
-CreatePassphrase()
+CreatePassphrase ()
 {
 	#	Creating a secure passphrase if needed
 	ConfirmChoice "Generate a passphrase with 128 bits of entropy ?" && passwd=$(dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64 | sed 's/=//g')
 	ConfirmChoice "Generate a passphrase with 256 bits of entropy ?" && passwd=$(dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//')
+}
+
+Permissions ()
+{
+	chmod 600 ~/.ssh/authorized_keys
+	chmod 600 ~/.ssh/config
+	chmod 644 ~/.ssh/*.pub
+	chmod 700 ~/.ssh/
+	chmod 755 $HOME
 }
 
 #-------------------#
