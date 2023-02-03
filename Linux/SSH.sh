@@ -37,6 +37,21 @@ Permissions ()
 	chmod 755 $HOME
 }
 
+File_sshd ()
+{
+        grep -q 'PermitRootLogin yes' /etc/ssh/sshd_config
+        if      [ $? -eq 1 ] ; then
+                sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config || \
+                sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+                systemctl restart ssh
+                systemctl restart sshd
+        else
+                sed -i 's/PermitRootLogin yes/#PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+                systemctl restart ssh
+                systemctl restart sshd
+        fi
+}
+
 #-------------------#
 #	Start	    #
 #-------------------#
@@ -44,6 +59,9 @@ Permissions ()
 if	[ ! -d ~/.ssh ] ; then
 	mkdir ~/.ssh
 fi
+
+#	Enable PermitRootLogin
+	File_sshd
 
 #	Using an existing passphrase
 ConfirmChoice "Do you want to use a passphrase" && read -sp 'Your passphrase : ' passwd || CreatePassphrase
@@ -106,3 +124,6 @@ Host $hostname
 	User $login
 	IdentityFile ~/.ssh/$keyname
 END
+
+#	Disable PermitRootLogin
+	File_sshd
