@@ -60,8 +60,8 @@ if	[ ! -d ~/.ssh ] ; then
 	mkdir ~/.ssh
 fi
 
-#	Enable PermitRootLogin
-	File_sshd
+#	Enable PermitRootLogin (need to be fixed)
+#	File_sshd
 
 #	Using an existing passphrase
 ConfirmChoice "Do you want to use a passphrase" && read -sp 'Your passphrase : ' passwd || CreatePassphrase
@@ -80,7 +80,7 @@ passph="passph-$keyname.txt"
 #	Encryption algorithms
 
 echo "One of these encryption algorithms is recommended"
-echo "RSA | ED25519" && sleep 2
+echo "RSA | ED25519"
 
 if	[ -n "$passwd" ] ; then
 	echo "$passwd" > "$HOME"/"$passph" && chmod 400 "$HOME"/"$passph" ; echo "Your passphrase is located in $HOME/$passph"
@@ -125,5 +125,5 @@ Host $hostname
 	IdentityFile ~/.ssh/$keyname
 END
 
-#	Disable PermitRootLogin
-	File_sshd
+#	Disable PermitRootLogin (need to be fixed)
+#	File_sshd
